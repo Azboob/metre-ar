@@ -1,6 +1,6 @@
 // Écran « Plan » : aperçu à l'échelle, corrections de cotes, exports PDF / DXF / image
-import * as P from './plan.js';
-import { $, $$, toast, saveFile, slug } from './util.js';
+import * as P from './plan.js?v=2.0.1';
+import { $, $$, toast, saveFile, slug } from './util.js?v=2.0.1';
 
 let C = null; // contexte fourni par app.js : { rel(), persist(), snapshot(), undo(), onClose() }
 const S = { roomId: null, page: 0, paper: 'A4', scale: 'auto', pages: [], g: null, vb: null };

@@ -1,7 +1,7 @@
-import * as G from './geo.js';
-import * as P from './plan.js';
-import { $, $$, fmtLen, fmtArea, esc, KIND, toast, armConfirm, round3, saveFile, slug } from './util.js';
-import { openPlan, buildPages } from './planview.js';
+import * as G from './geo.js?v=2.0.1';
+import * as P from './plan.js?v=2.0.1';
+import { $, $$, fmtLen, fmtArea, esc, KIND, toast, armConfirm, round3, saveFile, slug } from './util.js?v=2.0.1';
+import { openPlan, buildPages } from './planview.js?v=2.0.1';
 
 const LS = {
   get(k, d) { try { const v = localStorage.getItem(k); return v ? JSON.parse(v) : d; } catch (e) { return d; } },
