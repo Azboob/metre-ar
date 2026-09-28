@@ -1,25 +1,25 @@
-# Métré AR — plan de pièce (version 1)
+# Métré AR — relevé de pièces (v2)
 
-Une pièce par relevé. Android + Chrome (réalité augmentée ARCore). Sur ordinateur : importer un relevé pour le corriger et imprimer.
+Web app pour **Android + Chrome** (réalité augmentée ARCore). Adresse : https://azboob.github.io/metre-ar/
+Ancienne version « une pièce par relevé » : https://azboob.github.io/metre-ar/v1/
 
-## Relevé
-1. Créer le relevé : nom + pièce.
-2. « Relever le contour » : balayer le sol, viser chaque angle AU SOL et toucher +. « Annuler le point » retire le dernier.
-3. Fermer : revenir viser le 1er angle, ou « Fermer le contour ». Refus si moins de 3 angles, angles doublons (< 5 cm), murs qui se croisent, surface < 0,5 m².
-4. Suivi perdu : message rouge, + bloqué ; à la reprise, les angles suivants sont marqués « après reprise ». Si ARCore réinitialise son repère : recommencer le contour.
+## Relevé (téléphone)
+1. **Pièce** : visez chaque angle de la pièce au sol, en faisant le tour, puis revenez au 1er angle (ou « Terminer »). Un contour qui se croise ou deux angles à moins de 5 cm sont refusés.
+2. **Plafond** : visez le haut d'un angle (jonction mur / plafond). Plafond en pente : touchez **« Une par angle »** et visez le haut de chaque angle dans l'ordre (« Passer » pour sauter un angle).
+3. **Ouverture** : pour chaque porte ou fenêtre, visez deux coins opposés.
+4. Recommencez **Pièce** pour la pièce suivante. **Distance** et **Hauteur** restent disponibles pour des mesures isolées.
 
-## Plan et corrections
-- Les angles sont projetés sur un sol commun (médiane des hauteurs). Longueurs et surface calculées en 2D. Angles réels conservés, jamais forcés à 90°.
-- Toucher une cote → saisir la longueur au mètre → « Voir l'effet » : ancien contour en pointillés, murs modifiés, surface avant/après → « Appliquer ».
-- Méthode : directions des murs mesurées conservées ; cotes vérifiées figées ; autres murs ajustés au minimum pour fermer. Si impossible : écart affiché, rien n'est changé ; option « Ajuster aussi les angles ».
-- Statuts : 412 = mesure AR · 410 V = vérifiée au mètre · 405 A = ajustée. Les mesures AR d'origine restent dans le relevé.
+**Suivi perdu** : un bandeau rouge s'affiche, les points posés sont gardés ; revenez lentement vers une zone déjà filmée.
+**Repère AR réinitialisé** : les pièces finies sont gardées (plafond et ouvertures à compléter sur le plan), la pièce en cours est à recommencer, les suivantes forment une nouvelle séance.
 
-## Hauteurs sous plafond
-- Au choix : **une hauteur** (plafond plat) ou **une par angle** (plafond en pente, irrégulier).
-- « Mesurer en AR » : pour chaque hauteur, viser le sol au pied (dans l'angle), puis le plafond juste au-dessus. « Passer » saute un angle.
-- Ou saisir la valeur au mètre dans le tableau (statut « vérifiée »).
-- Surfaces **brutes** (portes et fenêtres non déduites) : chaque mur = longueur × moyenne des hauteurs de ses deux angles ; plafond = surface réelle (inclinée si les hauteurs diffèrent).
-- Refaire le contour efface les hauteurs par angle (les angles changent) ; la hauteur unique est conservée.
+## Plan de chaque pièce
+- Onglets : vue de dessus, élévation de chaque mur vu de l'intérieur (M1, M2…), récapitulatif des surfaces.
+- **Corriger une cote** : touchez-la, tapez la mesure au mètre ou au laser → aperçu (ancien contour en pointillés, murs qui bougent, surface avant/après) → « Appliquer ». Les angles mesurés sont conservés, les murs non vérifiés s'ajustent le moins possible pour fermer la pièce. Si c'est impossible, l'écart est affiché et rien ne change ; « Ajuster aussi les angles » est alors proposé. La mesure AR d'origine reste toujours enregistrée.
+- Couleurs des cotes : noir = mesure AR, **bleu V** = vérifiée au mètre, **orange A** = ajustée pour fermer.
+- **Hauteurs** : touchez « HSP » (ou « h » à un angle) : une hauteur, ou une par angle ; saisie au mètre possible. Murs en trapèze, surfaces brutes / nettes (ouvertures déduites), plafond en vraie surface.
+- **Mettre d'équerre** (décoché par défaut) : redresse à 90° les angles qui en sont à moins de 5°.
+- Une porte ou fenêtre qui dépasse de son mur après une correction est signalée.
+- Exports PDF / DXF / Image : prêts dans le code, masqués pour l'instant.
 
-## PDF (prêt, bouton masqué pour l'instant)
-Nom, pièce, dates, cotes en cm, surface, statuts, détail des cotes (page 2). Échelle écrite seulement si le dessin est exactement à 1/10, 1/20, 1/25, 1/50 ou 1/100, avec « valable imprimé à 100 % » et un trait de contrôle de 5 cm ; sinon « plan non à l'échelle — les cotes font foi ».
+## Mettre à jour la version en ligne
+https://github.com/Azboob/metre-ar/upload/main → glisser les **fichiers** du dossier Documents\metre-ar-v2 (Ctrl+A), pas le dossier → **Commit changes**.

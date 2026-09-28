@@ -14,120 +14,124 @@
 </head>
 <body>
 
-<!-- ========== LISTE DES RELEVÉS ========== -->
-<div id="home" class="screen">
-  <header class="top"><div class="brand"><span class="tape" aria-hidden="true"></span>Métré AR</div><span class="tag">Plan de pièce</span></header>
+<!-- ========== ÉCRAN D'ACCUEIL / CHANTIER ========== -->
+<div id="home">
+  <header class="top">
+    <div class="brand"><span class="tape" aria-hidden="true"></span>Métré AR</div>
+  </header>
+
   <main class="wrap">
-    <section class="card">
-      <h1>Nouveau relevé</h1>
-      <p class="muted">Une pièce par relevé : on vise les angles au sol, l'app dessine le contour, les longueurs des murs et la surface au sol.</p>
-      <form id="newForm" class="fields">
-        <label class="f">Nom du relevé<input id="newNom" required placeholder="ex. Dupont – 12 rue des Lilas" autocomplete="off"></label>
-        <label class="f">Pièce<input id="newPiece" required placeholder="ex. Salon" autocomplete="off"></label>
-        <button class="btn primary big" type="submit">Créer le relevé</button>
-      </form>
+    <section class="card hero">
+      <h1>Relevé de pièces</h1>
+      <p class="muted">Visez les angles au sol, le plafond et les ouvertures : l'app dessine le plan coté de chaque pièce et l'élévation de chaque mur, avec les surfaces.</p>
+      <button id="startBtn" class="btn primary big" type="button" disabled>Vérification du téléphone…</button>
       <p id="compat" class="small muted"></p>
     </section>
+
     <section class="card">
-      <div class="row between"><h2>Relevés enregistrés</h2><button id="importBtn" class="btn sm ghost" type="button">Importer un fichier</button></div>
-      <input id="importFile" type="file" accept=".json,application/json" hidden>
-      <ul id="list" class="list"></ul>
+      <div class="row between">
+        <h2>Chantier en cours</h2>
+        <button id="newBtn" class="btn sm ghost" type="button">Nouveau chantier</button>
+      </div>
+      <label class="f">Nom du chantier<input id="relName" type="text" placeholder="ex. Dupont – 12 rue des Lilas"></label>
+
+      <h3 class="sub">Pièces</h3>
+      <ul id="rooms" class="rooms"></ul>
+      <div class="actions" hidden>
+        <button id="allPdfBtn" class="btn primary" type="button">Plans PDF du chantier</button>
+      </div>
+
+      <h3 class="sub">Mesures isolées</h3>
+      <ul id="list" class="ms"></ul>
+
+      <div class="actions">
+        <button id="saveBtn" class="btn" type="button">Enregistrer</button>
+        <button id="shareBtn" class="btn" type="button">Partager le texte</button>
+        <button id="exportBtn" class="btn" type="button">Envoyer vers l'ordinateur</button>
+        <button id="importBtn" class="btn" type="button">Importer un chantier</button>
+        <button id="diagBtn" class="btn ghost" type="button">Diagnostic</button>
+        <input id="importFile" type="file" accept=".json,application/json" hidden>
+      </div>
+      <textarea id="copyfb" readonly hidden></textarea>
+    </section>
+
+    <section class="card">
+      <h2>Chantiers enregistrés</h2>
+      <ul id="saved" class="saved"></ul>
+    </section>
+
+    <section class="note">
+      <p><b>Déroulé</b> : « Pièce » → visez chaque angle de la pièce au sol → « Plafond » → visez le haut d'un angle (ou « Une par angle » si le plafond est en pente) → « Ouverture » → deux coins opposés de chaque porte ou fenêtre. Recommencez « Pièce » pour la pièce suivante.</p>
+      <p><b>Précision</b> : environ ±2 cm avec une bonne lumière. Touchez une cote sur le plan pour saisir la mesure au mètre : elle passe en bleu (V), les murs non vérifiés s'ajustent pour fermer la pièce (orange, A).</p>
     </section>
   </main>
 </div>
 
-<!-- ========== UN RELEVÉ ========== -->
-<div id="rel" class="screen" hidden>
-  <header class="top"><button id="backBtn" class="btn sm ghost" type="button">← Relevés</button><span id="relTitle" class="ttl"></span></header>
-  <main class="wrap">
-    <section class="card">
-      <div class="fields">
-        <label class="f">Nom du relevé<input id="relNom" autocomplete="off"></label>
-        <label class="f">Pièce<input id="relPiece" autocomplete="off"></label>
-      </div>
-    </section>
-
-    <section id="noContour" class="card">
-      <h2>Contour de la pièce</h2>
-      <p class="muted">Pas encore de contour. Vous allez viser chaque angle de la pièce au sol, en faisant le tour, puis fermer le contour.</p>
-      <button id="startBtn" class="btn primary big" type="button" disabled>Vérification du téléphone…</button>
-      <p id="compat2" class="small muted"></p>
-    </section>
-
-    <section id="contour" class="card" hidden>
-      <div class="row between"><h2>Plan</h2><span id="methode" class="small muted"></span></div>
-      <div id="view" class="view"></div>
-      <p class="small muted">Touchez une cote pour saisir la longueur mesurée au mètre. <span class="lg"><b class="c-ar">412</b> mesure AR · <b class="c-ver">410 V</b> vérifiée · <b class="c-adj">405 A</b> ajustée</span></p>
-      <div id="stats" class="stats"></div>
-      <div id="alerts" class="alerts"></div>
-      <div class="tablewrap"><table id="walls" class="walls"></table></div>
-    </section>
-
-    <section id="heights" class="card" hidden>
-      <h2>Hauteurs sous plafond</h2>
-      <div class="seg" role="radiogroup" aria-label="Nombre de hauteurs">
-        <button type="button" data-hm="unique" role="radio">Une hauteur</button>
-        <button type="button" data-hm="angles" role="radio">Une par angle</button>
-      </div>
-      <p id="hInfo" class="small muted"></p>
-      <div class="tablewrap"><table id="htable" class="walls"></table></div>
-      <div class="row"><button id="hArBtn" class="btn primary" type="button">Mesurer en AR</button></div>
-      <div id="hStats" class="stats"></div>
-    </section>
-
-    <section id="actions" class="card" hidden>
-      <!-- Export PDF : prêt mais masqué pour l'instant (pas prioritaire) -->
-      <div class="row" hidden>
-        <label class="f inline">Papier<select id="paper"><option>A4</option><option>A3</option></select></label>
-        <button id="pdfBtn" class="btn primary" type="button">Exporter le PDF coté</button>
-      </div>
-      <div class="row">
-        <button id="redoBtn" class="btn" type="button">Refaire le contour</button>
-        <button id="fileBtn" class="btn" type="button">Exporter le fichier</button>
-        <button id="delBtn" class="btn ghost danger" type="button">Supprimer le relevé</button>
-      </div>
-    </section>
-  </main>
+<!-- ========== PLAN À L'ÉCHELLE ========== -->
+<div id="plan" hidden>
+  <div class="ptop">
+    <button id="pBack" class="btn sm dark" type="button">← Chantier</button>
+    <span id="pTitle" class="ptitle"></span>
+  </div>
+  <div id="pTabs" class="ptabs" role="tablist"></div>
+  <div id="pStage" class="pstage"></div>
+  <div class="pbar">
+    <div id="pInfo" class="pinfo"></div>
+    <div class="prow">
+      <span class="small">Papier</span>
+      <button class="chip" data-paper="A4" type="button">A4</button>
+      <button class="chip" data-paper="A3" type="button">A3</button>
+      <span class="small">Échelle</span>
+      <select id="pScale" aria-label="Échelle">
+        <option value="auto">Auto (1/10 si possible)</option>
+        <option value="10">1/10</option><option value="20">1/20</option><option value="25">1/25</option><option value="50">1/50</option>
+      </select>
+      <label class="chk"><input id="pSquare" type="checkbox"> Mettre d'équerre</label>
+    </div>
+    <div class="prow">
+      <button id="pAddOpen" class="btn sm dark" type="button" hidden>+ Ouverture</button>
+      <button id="pUndo" class="btn sm dark" type="button">Annuler</button>
+      <!-- Exports PDF / DXF / Image : prêts mais masqués pour l'instant -->
+      <span class="sp" hidden></span>
+      <button id="pPdf" class="btn sm dark go" type="button" hidden>PDF</button>
+      <button id="pDxf" class="btn sm dark" type="button" hidden>DXF</button>
+      <button id="pPng" class="btn sm dark" type="button" hidden>Image</button>
+    </div>
+  </div>
+  <form id="pEdit" class="pedit" hidden></form>
 </div>
 
-<!-- ========== CORRECTION D'UNE LONGUEUR ========== -->
-<div id="sheet" class="sheet" hidden>
-  <form id="corrForm" class="sheet-in">
-    <div class="row between"><h2 id="corrTitle"></h2><button id="corrClose" class="btn sm ghost" type="button">Fermer</button></div>
-    <p id="corrInfo" class="small"></p>
-    <div class="fields">
-      <label class="f">Longueur mesurée (cm)<input id="corrVal" inputmode="decimal" autocomplete="off"></label>
-      <label class="f">Outil<select id="corrTool"><option value="mètre">Mètre ruban</option><option value="laser">Télémètre laser</option></select></label>
-    </div>
-    <div class="row"><button class="btn primary" type="submit">Voir l'effet sur le plan</button><button id="corrRevert" class="btn" type="button" hidden>Revenir à la mesure AR</button></div>
-    <div id="preview" hidden>
-      <div id="pview" class="view small-view"></div>
-      <div id="pchanges" class="changes"></div>
-      <div class="row"><button id="applyBtn" class="btn primary" type="button">Appliquer la correction</button><button id="anglesBtn" class="btn" type="button" hidden>Ajuster aussi les angles</button><button id="cancelBtn" class="btn ghost" type="button">Annuler</button></div>
-    </div>
-  </form>
-</div>
-
-<!-- ========== RÉALITÉ AUGMENTÉE ========== -->
+<!-- ========== SUPERPOSITION PENDANT LA RÉALITÉ AUGMENTÉE ========== -->
 <div id="ar" hidden>
   <div id="labels"></div>
   <div class="cross" aria-hidden="true"></div>
   <div class="hud">
-    <div class="hud-top"><span id="hudMode" class="hud-mode">Contour</span><span id="hudRoom" class="hud-room"></span><button id="quitBtn" class="btn sm dark" type="button">Quitter</button></div>
+    <div class="hud-top">
+      <span id="hudMode" class="hud-mode">Pièce</span>
+      <span id="hudRoom" class="hud-room"></span>
+      <button id="quitBtn" class="btn sm dark" type="button">Quitter</button>
+    </div>
     <div id="hudVal" class="hud-val">—</div>
     <div id="hudTip" class="hud-tip">Balayez lentement le sol avec le téléphone…</div>
   </div>
-  <div id="lost" class="lost" hidden><b>Suivi perdu</b><span>Revenez lentement vers une zone déjà filmée, bien éclairée. Les angles déjà posés sont conservés.</span></div>
+  <div id="lost" class="lost" hidden><b>Suivi perdu</b><span>Revenez lentement vers une zone déjà filmée, bien éclairée. Les points déjà posés sont conservés.</span></div>
   <div id="resetBox" class="lost reset" hidden>
     <b>Le repère AR a été réinitialisé</b>
-    <span>Les angles déjà posés ne correspondent plus à la pièce. Il faut recommencer le contour.</span>
-    <div class="row"><button id="restartBtn" class="btn dark go" type="button">Recommencer le contour</button><button id="quit2Btn" class="btn dark" type="button">Quitter</button></div>
+    <span id="resetMsg"></span>
+    <div class="row"><button id="restartBtn" class="btn dark go" type="button">Continuer (nouvelle séance)</button><button id="quit2Btn" class="btn dark" type="button">Quitter</button></div>
   </div>
   <div class="ctrl">
     <div class="acts">
-      <button id="undoBtn" class="btn dark" type="button">Annuler le point</button>
-      <button id="addBtn" class="add" type="button" aria-label="Poser un angle"><span>+</span></button>
-      <button id="closeBtn" class="btn dark" type="button" disabled>Fermer le contour</button>
+      <button id="undoBtn" class="btn dark" type="button">Annuler</button>
+      <button id="addBtn" class="add" type="button" aria-label="Poser un point"><span>+</span></button>
+      <button id="finBtn" class="btn dark" type="button" disabled>Terminer</button>
+    </div>
+    <div class="modes" role="group" aria-label="Type de mesure">
+      <button class="mode" data-m="room" type="button" aria-pressed="true">Pièce</button>
+      <button class="mode" data-m="ceiling" type="button" aria-pressed="false" disabled>Plafond</button>
+      <button class="mode" data-m="opening" type="button" aria-pressed="false" disabled>Ouverture</button>
+      <button class="mode" data-m="dist" type="button" aria-pressed="false">Distance</button>
+      <button class="mode" data-m="height" type="button" aria-pressed="false">Hauteur</button>
     </div>
   </div>
 </div>
